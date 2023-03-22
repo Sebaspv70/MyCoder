@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
             }
 
 
+
+
             if (MainBinding.emailEditText.text.isNullOrEmpty()){
                 Toast.makeText(
                     applicationContext,
