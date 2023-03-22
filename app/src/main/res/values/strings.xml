@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyCoder</string>
+    <string name="HeaderTextButton">My C#der</string>
+    <string name="TextRequired">Text required*</string>
+    <string name="InputTextName">Name</string>
+    <string name="InputTextEmail">Email</string>
+    <string name="InputTextPassword">Password</string>
+    <string name="InputTextRepeatPassword">Repeat Password</string>
+    <string name="ButtonRegister">Register</string>
+    <string name="title_activity_splash">SplashActivity</string>
+</resources>
