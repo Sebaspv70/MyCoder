@@ -3,11 +3,14 @@ package com.emmanuelarango.mycoder.ui.main
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.emmanuelarango.mycoder.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var MainBinding: ActivityMainBinding
+    private lateinit var mainViewModel:MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,28 +18,21 @@ class MainActivity : AppCompatActivity() {
         val view = MainBinding.root
         setContentView(view)
 
-        MainBinding.registerButton.setOnClickListener {
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-            var password = ""
 
-            if (MainBinding.nameEditText.text.isNullOrEmpty()){
+        val isErrorValidationObserver = Observer<Int>{validation ->
+
+            if (validation == 1) {
                 Toast.makeText(
                     applicationContext,
                     "Nombre de usuario Vacio",
                     Toast.LENGTH_LONG
                 ).show()
-
                 MainBinding.nameTextInputLayout.error = "Nombre de usuario Vacio"
+                MainBinding.nameEditText.setText("")
 
-            }else{
-                val name = MainBinding.nameEditText.text.toString()
-                MainBinding.nameTextInputLayout.isErrorEnabled = false
-            }
-
-
-
-
-            if (MainBinding.emailEditText.text.isNullOrEmpty()){
+            }else if(validation == 2){
                 Toast.makeText(
                     applicationContext,
                     "Correo de usuario Vacio",
@@ -44,27 +40,19 @@ class MainActivity : AppCompatActivity() {
                 ).show()
 
                 MainBinding.emailTextInputLayout.error = "Correo de usuario Vacio"
-            }else{
-                val email = MainBinding.emailEditText.text.toString()
-                MainBinding.emailTextInputLayout.isErrorEnabled = false
-            }
+                MainBinding.emailEditText.setText("")
 
-            if (MainBinding.emailEditText.text.isNullOrEmpty()){
+            }else if(validation == 3){
                 Toast.makeText(
                     applicationContext,
-                    "Correo de usuario Vacio",
+                    "Contraseña de usuario Vacio",
                     Toast.LENGTH_LONG
                 ).show()
 
-                MainBinding.passwordInputTextLayout.error = "Correo de usuario Vacio"
-            }else{
-                password = MainBinding.passwordTextInput.text.toString()
-                MainBinding.passwordInputTextLayout.isErrorEnabled = false
-            }
+                MainBinding.passwordInputTextLayout.error = "Contraseña de usuario Vacio"
+                MainBinding.passwordTextInput.setText("")
 
-            val repPassword = MainBinding.repPasswordTextInput.text.toString()
-
-            if (password != repPassword){
+            }else if(validation == 4){
                 Toast.makeText(
                     applicationContext,
                     "Las contraseñas no son iguales",
@@ -74,6 +62,36 @@ class MainActivity : AppCompatActivity() {
                 MainBinding.repPasswordTextInputLayout.error = "Las contraseñas no son iguales"
                 MainBinding.repPasswordTextInput.setText("")
             }
+        }
+
+        val resetErrorObserver = Observer<Int>{reset ->
+
+            if (reset == 1) {
+                MainBinding.nameTextInputLayout.isErrorEnabled = false
+            }else if(reset == 2){
+                MainBinding.emailTextInputLayout.isErrorEnabled = false
+            }else if(reset == 3){
+                MainBinding.passwordInputTextLayout.isErrorEnabled = false
+            }else if(reset == 4){
+                MainBinding.repPasswordTextInputLayout.isErrorEnabled = false
+            }
+        }
+
+
+        mainViewModel.isErrorValidation.observe(this, isErrorValidationObserver)
+        mainViewModel.resetError.observe(this, resetErrorObserver)
+
+
+
+        MainBinding.registerButton.setOnClickListener {
+
+            val name = MainBinding.nameEditText.text.toString()
+            val email = MainBinding.emailEditText.text.toString()
+            val password = MainBinding.passwordTextInput.text.toString()
+            val repPassword = MainBinding.repPasswordTextInput.text.toString()
+
+
+            mainViewModel.Validations(name,email,password,repPassword)
 
         }
 
